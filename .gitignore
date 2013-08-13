@@ -1,0 +1,12 @@
+.DS_Store
+target
+bin
+.classpath
+.settings
+.project
+*.iml
+*.ipr
+*.iws
+work
+release.properties
+.idea
