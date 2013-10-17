@@ -2,11 +2,8 @@ package org.jenkinsci.plugins.hue_light;
 
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.tasks.BuildWrapper;
-import hudson.tasks.BuildWrapperDescriptor;
+import hudson.model.*;
+import hudson.tasks.*;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -15,14 +12,14 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.PrintStream;
 
 
-public class LightBuildWrapper extends BuildWrapper {
-
+public class LightNotifier extends Notifier {
     private final String lightId;
 
     @DataBoundConstructor
-    public LightBuildWrapper(String lightId) {
+    public LightNotifier(String lightId) {
         this.lightId = lightId;
     }
 
@@ -31,19 +28,53 @@ public class LightBuildWrapper extends BuildWrapper {
     }
 
     @Override
-    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        return super.setUp(build, launcher, listener);
+    public boolean prebuild(Build build, BuildListener listener) {
+        final PrintStream logger = listener.getLogger();
+
+        logger.println("prebuild");
+
+        return super.prebuild(build, listener);
     }
 
     @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)super.getDescriptor();
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        final PrintStream logger = listener.getLogger();
+
+        BallColor ballcolor = build.getResult().color;
+
+        // success
+        if (BallColor.BLUE == ballcolor)
+            logger.println("successful!");
+        // unstable
+        else if (BallColor.YELLOW == ballcolor)
+            logger.println("unstable!");
+        // error
+        else if (BallColor.RED == ballcolor)
+            logger.println("fatal errors!");
+
+        return true;
+    }
+
+    @Override
+    public boolean needsToRunAfterFinalized() {
+        return true;
+    }
+
+    @Override
+    public BuildStepDescriptor getDescriptor() {
+        return (BuildStepDescriptor)super.getDescriptor();
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
 
 
+    private static final String FORM_KEY_BRIDGE_IP = "bridgeIp";
+    private static final String FORM_KEY_BRIDGE_USERNAME = "bridgeUsername";
 
     @Extension
-    public static final class DescriptorImpl extends BuildWrapperDescriptor {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         private String bridgeIp;
         private String bridgeUsername;
@@ -53,14 +84,13 @@ public class LightBuildWrapper extends BuildWrapper {
         }
 
         @Override
-        public boolean isApplicable(AbstractProject<?, ?> abstractProject) {
-            ///TODO check sth. useful here
+        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
         }
 
         @Override
         public String getDisplayName() {
-            return "Control Hue-Light";
+            return "Colorize Hue-Light";
         }
 
         public FormValidation doCheckBridgeIp(@QueryParameter String value)
@@ -104,8 +134,11 @@ public class LightBuildWrapper extends BuildWrapper {
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            this.bridgeIp = formData.getString("bridgeIp");
-            this.bridgeUsername = formData.getString("bridgeUsername");
+            if (!formData.containsKey(FORM_KEY_BRIDGE_IP) || !formData.containsKey(FORM_KEY_BRIDGE_USERNAME))
+                return false; // keep client on config page
+
+            this.bridgeIp = formData.getString(FORM_KEY_BRIDGE_IP);
+            this.bridgeUsername = formData.getString(FORM_KEY_BRIDGE_USERNAME);
             this.save();
             return super.configure(req, formData);
         }
