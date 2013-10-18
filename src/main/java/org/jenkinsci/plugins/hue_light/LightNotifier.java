@@ -6,17 +6,19 @@ import hudson.model.*;
 import hudson.tasks.*;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
+import nl.q42.jue.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.PrintStream;
 
 
 public class LightNotifier extends Notifier {
     private final String lightId;
+    private LightController lightController;
+
 
     @DataBoundConstructor
     public LightNotifier(String lightId) {
@@ -29,28 +31,30 @@ public class LightNotifier extends Notifier {
 
     @Override
     public boolean prebuild(Build build, BuildListener listener) {
-        final PrintStream logger = listener.getLogger();
+        // does not work in constructor...
+        final DescriptorImpl descriptor = this.getDescriptor();
+        this.lightController = new LightController(descriptor.getBridgeIp(), descriptor.getBridgeUsername(), listener.getLogger());
 
-        logger.println("prebuild");
+        Light light = this.lightController.getLightForId(this.lightId);
+        this.lightController.setColor(light, LightColor.BLUE);
 
         return super.prebuild(build, listener);
     }
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        final PrintStream logger = listener.getLogger();
-
         BallColor ballcolor = build.getResult().color;
+        Light light = this.lightController.getLightForId(this.lightId);
 
         // success
         if (BallColor.BLUE == ballcolor)
-            logger.println("successful!");
+            this.lightController.setColor(light, LightColor.GREEN);
         // unstable
         else if (BallColor.YELLOW == ballcolor)
-            logger.println("unstable!");
+            this.lightController.setColor(light, LightColor.YELLOW);
         // error
         else if (BallColor.RED == ballcolor)
-            logger.println("fatal errors!");
+            this.lightController.setColor(light, LightColor.RED);
 
         return true;
     }
@@ -61,8 +65,8 @@ public class LightNotifier extends Notifier {
     }
 
     @Override
-    public BuildStepDescriptor getDescriptor() {
-        return (BuildStepDescriptor)super.getDescriptor();
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl)super.getDescriptor();
     }
 
     public BuildStepMonitor getRequiredMonitorService() {

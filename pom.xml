@@ -17,6 +17,10 @@
       <id>repo.jenkins-ci.org</id>
       <url>http://repo.jenkins-ci.org/public/</url>
     </repository>
+    <repository>
+        <id>libs</id>
+        <url>file:///${project.basedir}/libs</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -33,4 +37,12 @@
     -->
     <maven-hpi-plugin.version>1.96</maven-hpi-plugin.version>
   </properties>
+
+  <dependencies>
+      <dependency>
+          <groupId>nl.q42.jue</groupId>
+          <artifactId>jue</artifactId>
+          <version>1.0</version>
+      </dependency>
+  </dependencies>
 </project>
