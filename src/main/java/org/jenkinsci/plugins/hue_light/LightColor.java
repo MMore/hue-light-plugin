@@ -12,10 +12,18 @@ public enum LightColor {
         this.name = name;
     }
 
+    /**
+     * Returns the hue-value for the color.
+     * @return hue
+     */
     public int getHue() {
         return this.hue;
     }
 
+    /**
+     * Returns a human readable name of the color.
+     * @return name
+     */
     public String getName() {
         return this.name;
     }

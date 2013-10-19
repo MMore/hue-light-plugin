@@ -11,6 +11,21 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>MMore</id>
+      <name>Mathias Nestler</name>
+      <email>m@mathiasnestler.de</email>
+    </developer>
+  </developers>
+
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>
@@ -18,8 +33,8 @@
       <url>http://repo.jenkins-ci.org/public/</url>
     </repository>
     <repository>
-        <id>libs</id>
-        <url>file:///${project.basedir}/libs</url>
+      <id>libs</id>
+      <url>file:///${project.basedir}/libs</url>
     </repository>
   </repositories>
 
@@ -39,10 +54,10 @@
   </properties>
 
   <dependencies>
-      <dependency>
-          <groupId>nl.q42.jue</groupId>
-          <artifactId>jue</artifactId>
-          <version>1.0</version>
-      </dependency>
+    <dependency>
+      <groupId>nl.q42.jue</groupId>
+      <artifactId>jue</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 </project>
