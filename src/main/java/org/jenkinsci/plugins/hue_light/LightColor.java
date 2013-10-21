@@ -2,7 +2,7 @@ package org.jenkinsci.plugins.hue_light;
 
 
 public enum LightColor {
-    RED(0, "red"), YELLOW(12750, "yellow"), GREEN(36210, "green"), BLUE(46920, "blue");
+    RED(0, "red"), YELLOW(12750, "yellow"), GREEN(25717, "green"), BLUE(46920, "blue");
 
     private final int hue;
     private final String name;
