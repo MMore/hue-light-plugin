@@ -8,8 +8,10 @@
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>hue-light</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>hpi</packaging>
+  <name>hue-light</name>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/hue-light+Plugin</url>
 
   <licenses>
     <license>
@@ -17,6 +19,12 @@
       <url>http://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
+
+  <scm>
+    <connection>scm:git:ssh://github.com/jenkinsci/hue-light-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/hue-light-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/hue-light-plugin</url>
+  </scm>
 
   <developers>
     <developer>
@@ -44,6 +52,13 @@
       <url>http://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>maven.jenkins-ci.org</id>
+      <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+  </repository>
+  </distributionManagement>
 
   <properties>
     <!--

@@ -2,6 +2,7 @@
 
 
 Use the awesome [Philips hue lights](https://www.meethue.com) to show the state of your builds.
+
 The following states are implemented:
 
 * building => blue
@@ -12,7 +13,7 @@ The following states are implemented:
 
 ## Configuration
 
-1. Create a new user (http://developers.meethue.com/gettingstarted.html)
+1. Create a new user one the hue bridge (http://developers.meethue.com/gettingstarted.html)
 2. Open Global Setting and set the
   * IP address of the hue bridge
   * Authorized username of the hue bridge
