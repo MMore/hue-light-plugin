@@ -64,7 +64,7 @@ public class LightController {
         if (null == this.hueBridge || null == light || null == color)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setHue(color.getHue());
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(color.getHue());
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
