@@ -1,5 +1,6 @@
 # hue-light plugin for Jenkins CI
-
+#
+# April, 2014 - Christopher Ambler - fixed prebuild problems, added configurable colors
 
 Use the awesome [Philips hue lights](https://www.meethue.com) to show the state of your builds.
 
