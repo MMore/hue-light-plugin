@@ -21,9 +21,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:ssh://github.com/cambler/hue-light-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/cambler/hue-light-plugin.git</developerConnection>
-    <url>https://github.com/cambler/hue-light-plugin</url>
+    <connection>scm:git:ssh://github.com/jenkinsci/hue-light-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/hue-light-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/hue-light-plugin</url>
   </scm>
 
   <developers>
@@ -35,7 +35,7 @@
       <developer>
         <id>cambler</id>
         <name>Christopher Ambler</name>
-        <email>cambler@godaddy.com</email>
+        <email>chris@ambler.net</email>
       </developer>
   </developers>
 
