@@ -30,7 +30,10 @@ public class LightNotifier extends Notifier {
     }
 
     @Override
-    public boolean prebuild(Build build, BuildListener listener) {
+    /**
+     * CJA: Note that old prebuild using Build is deprecated. Now using AbstractBuild parameter.
+     */
+    public boolean prebuild(AbstractBuild build, BuildListener listener) {
         // does not work in constructor...
         final DescriptorImpl descriptor = this.getDescriptor();
         this.lightController = new LightController(descriptor.getBridgeIp(), descriptor.getBridgeUsername(), listener.getLogger());
