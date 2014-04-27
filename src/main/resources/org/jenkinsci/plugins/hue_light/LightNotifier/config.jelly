@@ -2,4 +2,16 @@
   <f:entry title="ID of a light" field="lightId">
     <f:textbox />
   </f:entry>
+  <f:entry title="Color for Pre-Build Trigger" field="preBuild">
+    <f:textbox default="blue" />
+  </f:entry>
+  <f:entry title="Color for Good Build" field="goodBuild">
+    <f:textbox default="green" />
+  </f:entry>
+  <f:entry title="Color for Unstable Build" field="unstableBuild">
+    <f:textbox default="yellow" />
+  </f:entry>
+  <f:entry title="Color for Bad Build" field="badBuild">
+    <f:textbox default="red" />
+  </f:entry>
 </j:jelly>

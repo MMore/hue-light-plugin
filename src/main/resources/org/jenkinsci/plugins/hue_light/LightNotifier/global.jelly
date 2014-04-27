@@ -6,5 +6,17 @@
     <f:entry title="Username" field="bridgeUsername">
       <f:textbox />
     </f:entry>
+    <f:entry title="Red" field="colorRed">
+      <f:textbox default="0" />
+    </f:entry>
+    <f:entry title="Yellow" field="colorYellow">
+      <f:textbox default="12750" />
+    </f:entry>
+    <f:entry title="Green" field="colorGreen">
+      <f:textbox default="25717" />
+    </f:entry>
+    <f:entry title="Blue" field="colorBlue">
+      <f:textbox default="46920" />
+    </f:entry>
   </f:section>
 </j:jelly>

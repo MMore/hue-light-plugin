@@ -1,6 +1,5 @@
 # hue-light plugin for Jenkins CI
 
-
 Use the awesome [Philips hue lights](https://www.meethue.com) to show the state of your builds.
 
 The following states are implemented:
