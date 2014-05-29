@@ -3,28 +3,26 @@ package org.jenkinsci.plugins.hue_light;
 
 import nl.q42.jue.HueBridge;
 import nl.q42.jue.Light;
+import nl.q42.jue.State;
 import nl.q42.jue.StateUpdate;
+
 import java.io.PrintStream;
 
 public class LightController {
     private final PrintStream logger;
-    private final String bridgeIp;
-    private final String bridgeUsername;
     private HueBridge hueBridge;
 
     /**
      * Connect with a hue bridge.
-     * @param bridgeIp ip of the hue bridge
-     * @param bridgeUsername username of the hue bridge
-     * @param logger logger stream
+     *
+     * @param descriptor The descriptor for this application
+     * @param logger     logger stream
      */
-    public LightController(String bridgeIp, String bridgeUsername, PrintStream logger) {
-        this.bridgeIp = bridgeIp;
-        this.bridgeUsername = bridgeUsername;
+    public LightController(LightNotifier.DescriptorImpl descriptor, PrintStream logger) {
         this.logger = logger;
 
         try {
-            this.hueBridge = new HueBridge(this.bridgeIp, this.bridgeUsername);
+            this.hueBridge = new HueBridge(descriptor.getBridgeIp(), descriptor.getBridgeUsername());
         } catch (Exception e) {
             this.logError(e.getMessage());
         }
@@ -32,6 +30,7 @@ public class LightController {
 
     /**
      * Returns a light object for a specific id.
+     *
      * @param id id of a light
      * @return light object if light found, otherwise null
      */
@@ -41,9 +40,6 @@ public class LightController {
                 for (Light light : this.hueBridge.getLights()) {
                     if (light.getId().equals(id)) {
                         return light;
-                    }
-                    else {
-                        this.logError("no light with id " + id + " found");
                     }
                 }
             } catch (Exception e) {
@@ -56,23 +52,63 @@ public class LightController {
 
     /**
      * Sets the color of a light.
+     *
      * @param light light object that should be manipulated
-     * @param color desired color
+     * @param logName The name to use for logging this color state change
+     * @param hue The hue of the desired color
      * @return true if color update was successful, otherwise false
      */
-    public boolean setColor(Light light, LightColor color) {
-        if (null == this.hueBridge || null == light || null == color)
+    public boolean setColor(Light light, String logName, int hue) {
+
+        if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(color.getHue());
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(hue).setEffect(State.Effect.NONE).setAlert((State.AlertMode.NONE));
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
-            this.logInfo("set color of light " + light.getId() + " (" + light.getName() + ")" + " to " + color.getName());
+            this.logInfo("set color of light " + light.getId() + " (" + light.getName() + ")" + " to " + logName + " (" + hue + ")");
         } catch (Exception e) {
             this.logError(e.getMessage());
             return false;
         }
+
+        return true;
+    }
+
+    public boolean setPulseColor(Light light, String logName, int hue) {
+
+        if (null == this.hueBridge || null == light)
+            return false;
+
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(hue).setEffect(State.Effect.COLORLOOP).setAlert(State.AlertMode.NONE);
+
+        try {
+            this.hueBridge.setLightState(light, stateUpdate);
+            this.logInfo("set pulse color of light " + light.getId() + " (" + light.getName() + ")" + " to " + logName + " (" + hue + ")");
+        } catch (Exception e) {
+            this.logError(e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean setPulseBreathe(Light light, String logName, int hue) {
+
+        if (null == this.hueBridge || null == light)
+            return false;
+
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(hue).setEffect(State.Effect.NONE).setAlert(State.AlertMode.LSELECT);
+
+        try {
+            this.hueBridge.setLightState(light, stateUpdate);
+            this.logInfo("set breathe color of light " + light.getId() + " (" + light.getName() + ")" + " to " + logName + " (" + hue + ")");
+        } catch (Exception e) {
+            this.logError(e.getMessage());
+            return false;
+        }
+
         return true;
     }
 
