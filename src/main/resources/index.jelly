@@ -1,3 +1,4 @@
 <div>
-  Control the Philips hue lights depending on the build state.
+  Control the <a href="http://meethue.com" target="_blank">Philips hue lights</a> depending on the build state.
+  <div style="color: red;">If you are using an older version, you must re-save the global and jobs configuration.</div>
 </div>
