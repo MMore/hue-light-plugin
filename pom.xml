@@ -9,7 +9,7 @@
 
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>hue-light</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>hue-light</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/hue-light+Plugin</url>
