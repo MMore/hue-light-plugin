@@ -1,25 +1,30 @@
 package org.jenkinsci.plugins.hue_light;
 
-import com.google.common.net.InetAddresses;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.BallColor;
 import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+
+import java.io.IOException;
+import java.util.HashSet;
+
+import javax.servlet.ServletException;
+
 import net.sf.json.JSONObject;
 import nl.q42.jue.Light;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
+import com.google.common.net.InetAddresses;
 
 public class LightNotifier extends Notifier {
     private static final String FORM_KEY_BRIDGE_IP = "bridgeIp";
@@ -28,7 +33,7 @@ public class LightNotifier extends Notifier {
     private static final String FORM_KEY_GREEN = "colorGreen";
     private static final String FORM_KEY_YELLOW = "colorYellow";
     private static final String FORM_KEY_RED = "colorRed";
-    private final String lightId;
+    private final HashSet<String> lightId;
     private final String preBuild;
     private final String goodBuild;
     private final String unstableBuild;
@@ -37,15 +42,18 @@ public class LightNotifier extends Notifier {
 
     @DataBoundConstructor
     public LightNotifier(String lightId, String preBuild, String goodBuild, String unstableBuild, String badBuild) {
-        this.lightId = lightId;
+    	this.lightId = new HashSet<String>();
+    	if(lightId != null) {
+    		String[] lightIds = lightId.split(",");
+    		for(String id : lightIds) {
+    			this.lightId.add(id.trim());
+    		}
+    	}
+        
         this.preBuild = preBuild;
         this.goodBuild = goodBuild;
         this.unstableBuild = unstableBuild;
         this.badBuild = badBuild;
-    }
-
-    public String getLightId() {
-        return this.lightId;
     }
 
     @Override
@@ -57,10 +65,11 @@ public class LightNotifier extends Notifier {
         final DescriptorImpl descriptor = this.getDescriptor();
 
         this.lightController = new LightController(descriptor, listener.getLogger());
-
-        Light light = this.lightController.getLightForId(this.lightId);
-        this.lightController.setPulseBreathe(light, "Build Starting", ConfigColorToHue(this.preBuild));
-
+        
+        for(String id : this.lightId) {
+	        Light light = this.lightController.getLightForId(id);
+	        this.lightController.setPulseBreathe(light, "Build Starting", ConfigColorToHue(this.preBuild));
+        }
         return super.prebuild(build, listener);
     }
 
@@ -85,20 +94,22 @@ public class LightNotifier extends Notifier {
         // NOTBUILT_ANIME
 
         BallColor ballcolor = build.getResult().color;
-        Light light = this.lightController.getLightForId(this.lightId);
-
-        switch (ballcolor) {
-            case RED:
-                this.lightController.setColor(light, "Bad Build", ConfigColorToHue(this.badBuild));
-                break;
-            case YELLOW:
-                this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(this.unstableBuild));
-                break;
-            case BLUE:
-                this.lightController.setColor(light, "Good Build", ConfigColorToHue(this.goodBuild));
-                break;
+        
+        for(String id : this.lightId) {
+	        Light light = this.lightController.getLightForId(id);
+	
+	        switch (ballcolor) {
+	            case RED:
+	                this.lightController.setColor(light, "Bad Build", ConfigColorToHue(this.badBuild));
+	                break;
+	            case YELLOW:
+	                this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(this.unstableBuild));
+	                break;
+	            case BLUE:
+	                this.lightController.setColor(light, "Good Build", ConfigColorToHue(this.goodBuild));
+	                break;
+	        }
         }
-
         return true;
     }
 
@@ -227,12 +238,15 @@ public class LightNotifier extends Notifier {
         public FormValidation doCheckLightId(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
-                return FormValidation.error("Please set the ID of the light");
-            if (!isInteger(value))
-                return FormValidation.error("Please enter a number");
-            if (Integer.parseInt(value) < 0)
-                return FormValidation.error("Please enter a non-negative number");
-
+                return FormValidation.error("Please set the ID(s) of the light(s) seperated by commas");
+            
+            String[] lightIds = value.split(",");
+            for(String id : lightIds) {
+    	        if (!isInteger(id.trim()))
+	                return FormValidation.error("Please enter positive integers only");
+	            if (Integer.parseInt(id.trim()) < 0)
+	                return FormValidation.error("Please enter non-negative numbers only");
+            }
             return FormValidation.ok();
         }
 
