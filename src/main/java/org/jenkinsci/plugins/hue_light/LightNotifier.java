@@ -55,6 +55,17 @@ public class LightNotifier extends Notifier {
         this.unstableBuild = unstableBuild;
         this.badBuild = badBuild;
     }
+	
+	public String getLightId() {
+		String lid = "";
+		if(lightId != null && lightId.size() > 0) {
+    		for(String id : lightId) {
+    			lid += id + ",";
+    		}
+			lid = lid.substring(0, lid.length() -1);
+    	}
+		return lid;
+	}
 
     @Override
     /**
