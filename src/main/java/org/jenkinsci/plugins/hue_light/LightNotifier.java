@@ -58,11 +58,11 @@ public class LightNotifier extends Notifier {
 	
 	public String getLightId() {
 		String lid = "";
-		if(lightId != null && lightId.size() > 0) {
-    		for(String id : lightId) {
+		if(this.lightId != null && this.lightId.size() > 0) {
+    		for(String id : this.lightId) {
     			lid += id + ",";
     		}
-			lid = lid.substring(0, lid.length() -1);
+			lid = lid.substring(0, lid.length() - 1);
     	}
 		return lid;
 	}
@@ -249,13 +249,14 @@ public class LightNotifier extends Notifier {
         public FormValidation doCheckLightId(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
-                return FormValidation.error("Please set the ID(s) of the light(s) seperated by commas");
+                return FormValidation.error("Please set the ID(s) of the light(s) separated by commas");
             
             String[] lightIds = value.split(",");
             for(String id : lightIds) {
-    	        if (!isInteger(id.trim()))
+                id = id.trim();
+    	        if (!isInteger(id))
 	                return FormValidation.error("Please enter positive integers only");
-	            if (Integer.parseInt(id.trim()) < 0)
+	            if (Integer.parseInt(id) < 0)
 	                return FormValidation.error("Please enter non-negative numbers only");
             }
             return FormValidation.ok();
