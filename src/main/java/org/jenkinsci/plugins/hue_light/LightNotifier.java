@@ -67,6 +67,22 @@ public class LightNotifier extends Notifier {
 		return lid;
 	}
 
+    public String getPreBuild() {
+        return this.preBuild;
+    }
+
+    public String getGoodBuild() {
+        return this.goodBuild;
+    }
+
+    public String getUnstableBuild() {
+        return this.unstableBuild;
+    }
+
+    public String getBadBuild() {
+        return this.badBuild;
+    }
+
     @Override
     /**
      * CJA: Note that old prebuild using Build is deprecated. Now using AbstractBuild parameter.
