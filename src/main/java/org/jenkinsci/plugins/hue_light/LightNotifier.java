@@ -24,7 +24,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.google.common.net.InetAddresses;
 
 public class LightNotifier extends Notifier {
     private static final String FORM_KEY_BRIDGE_IP = "bridgeIp";
@@ -223,7 +222,8 @@ public class LightNotifier extends Notifier {
         }
 
         /**
-         * Validates that some IP address was entered for the bridge.
+         * Validates that some IP address was entered for the bridge. A hostname is also valid (do not change variable
+         * name because this would be a breaking change).
          *
          * @param value The bridge IP address
          * @throws IOException
@@ -232,10 +232,7 @@ public class LightNotifier extends Notifier {
         public FormValidation doCheckBridgeIp(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
-                return FormValidation.error("Please set the IP of the bridge");
-
-            if (!InetAddresses.isInetAddress(value))
-                return FormValidation.error("Please enter a valid IP address");
+                return FormValidation.error("Please set the IP or hostname of the bridge");
 
             return FormValidation.ok();
         }
