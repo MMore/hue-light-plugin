@@ -11,6 +11,7 @@ import java.io.PrintStream;
 public class LightController {
     private final PrintStream logger;
     private HueBridge hueBridge;
+    private int saturation;
 
     /**
      * Connect with a hue bridge.
@@ -20,6 +21,7 @@ public class LightController {
      */
     public LightController(LightNotifier.DescriptorImpl descriptor, PrintStream logger) {
         this.logger = logger;
+        this.saturation = Integer.parseInt(descriptor.getSaturation());
 
         try {
             this.hueBridge = new HueBridge(descriptor.getBridgeIp(), descriptor.getBridgeUsername());
@@ -63,7 +65,7 @@ public class LightController {
         if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(hue).setEffect(State.Effect.NONE).setAlert((State.AlertMode.NONE));
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(this.saturation).setHue(hue).setEffect(State.Effect.NONE).setAlert((State.AlertMode.NONE));
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
@@ -81,7 +83,7 @@ public class LightController {
         if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(hue).setEffect(State.Effect.COLORLOOP).setAlert(State.AlertMode.NONE);
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(this.saturation).setHue(hue).setEffect(State.Effect.COLORLOOP).setAlert(State.AlertMode.NONE);
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
@@ -99,7 +101,7 @@ public class LightController {
         if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(255).setHue(hue).setEffect(State.Effect.NONE).setAlert(State.AlertMode.LSELECT);
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(255).setSat(this.saturation).setHue(hue).setEffect(State.Effect.NONE).setAlert(State.AlertMode.LSELECT);
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
