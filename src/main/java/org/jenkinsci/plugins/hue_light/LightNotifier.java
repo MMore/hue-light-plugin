@@ -33,6 +33,7 @@ public class LightNotifier extends Notifier {
     private static final String FORM_KEY_YELLOW = "colorYellow";
     private static final String FORM_KEY_RED = "colorRed";
     private static final String FORM_KEY_SATURATION = "saturation";
+    private static final String FORM_KEY_BRIGHTNESS = "brightness";
     private final HashSet<String> lightId;
     private final String preBuild;
     private final String goodBuild;
@@ -199,6 +200,7 @@ public class LightNotifier extends Notifier {
         private String yellow;
         private String red;
         private String saturation;
+        private String brightness;
 
         public DescriptorImpl() {
             this.load();
@@ -354,7 +356,7 @@ public class LightNotifier extends Notifier {
         }
 
         /**
-         * Validates that some value was entered for saturation and that it's [1..255]
+         * Validates that some value was entered for saturation and that it's [0..255]
          *
          * @param value The hue value for saturation
          * @throws IOException
@@ -366,7 +368,26 @@ public class LightNotifier extends Notifier {
                 return FormValidation.error("Please set the hue value for saturation");
             if (!isInteger(value))
                 return FormValidation.error("Please enter a number");
-            if (Integer.parseInt(value) < 1 || Integer.parseInt(value) > 255) 
+            if (Integer.parseInt(value) < 0 || Integer.parseInt(value) > 255) 
+                return FormValidation.error("Please enter number in range [0...255]");
+
+            return FormValidation.ok();
+        }
+
+        /**
+         * Validates that some value was entered for brightness and that it's [1..255]
+         *
+         * @param value The hue value for brightness
+         * @throws IOException
+         * @throws ServletException
+         */
+        public FormValidation doCheckBrightness(@QueryParameter String value)
+                throws IOException, ServletException {
+            if (value.length() == 0)
+                return FormValidation.error("Please set the hue value for saturation");
+            if (!isInteger(value))
+                return FormValidation.error("Please enter a number");
+            if (Integer.parseInt(value) < 1 || Integer.parseInt(value) > 255)
                 return FormValidation.error("Please enter number in range [1...255]");
 
             return FormValidation.ok();
@@ -384,6 +405,7 @@ public class LightNotifier extends Notifier {
             this.yellow = formData.getString(FORM_KEY_YELLOW);
             this.red = formData.getString(FORM_KEY_RED);
             this.saturation = formData.getString(FORM_KEY_SATURATION);
+            this.brightness = formData.getString(FORM_KEY_BRIGHTNESS);
 
             this.save();
 
@@ -416,6 +438,10 @@ public class LightNotifier extends Notifier {
 
         public String getSaturation() {
             return this.saturation;
+        }
+
+        public String getBrightness() {
+            return this.brightness;
         }
     }
 }
