@@ -18,5 +18,11 @@
     <f:entry title="Blue" field="colorBlue">
       <f:textbox default="46920" />
     </f:entry>
+    <f:entry title="Saturation" field="saturation">
+      <f:textbox default="255" />
+    </f:entry>  
+    <f:entry title="Brightness" field="brightness">
+      <f:textbox default="255" />
+    </f:entry>
   </f:section>
 </j:jelly>
