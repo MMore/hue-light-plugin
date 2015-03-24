@@ -14,4 +14,7 @@
   <f:entry title="Color for Bad Build" field="badBuild">
     <f:textbox default="red" />
   </f:entry>
+  <f:entry title="Brightness for Build (1-255)" field="brightness">
+    <f:textbox default="255" />
+  </f:entry>
 </j:jelly>
