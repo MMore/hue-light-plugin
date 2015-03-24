@@ -32,17 +32,16 @@ public class LightNotifier extends Notifier {
     private static final String FORM_KEY_GREEN = "colorGreen";
     private static final String FORM_KEY_YELLOW = "colorYellow";
     private static final String FORM_KEY_RED = "colorRed";
-    private static final String FORM_KEY_SATURATION = "saturation";
-    private static final String FORM_KEY_BRIGHTNESS = "brightness";
     private final HashSet<String> lightId;
     private final String preBuild;
     private final String goodBuild;
     private final String unstableBuild;
     private final String badBuild;
+    private final int brightness;
     private LightController lightController;
 
     @DataBoundConstructor
-    public LightNotifier(String lightId, String preBuild, String goodBuild, String unstableBuild, String badBuild) {
+    public LightNotifier(String lightId, String preBuild, String goodBuild, String unstableBuild, String badBuild, String brightness) {
     	this.lightId = new HashSet<String>();
     	if(lightId != null) {
     		String[] lightIds = lightId.split(",");
@@ -51,6 +50,7 @@ public class LightNotifier extends Notifier {
     		}
     	}
         
+    	this.brightness = Integer.parseInt(brightness);
         this.preBuild = preBuild;
         this.goodBuild = goodBuild;
         this.unstableBuild = unstableBuild;
@@ -84,6 +84,10 @@ public class LightNotifier extends Notifier {
         return this.badBuild;
     }
 
+    public String getBrightness() {
+        return Integer.toString(this.brightness);
+    }
+
     @Override
     /**
      * CJA: Note that old prebuild using Build is deprecated. Now using AbstractBuild parameter.
@@ -96,7 +100,7 @@ public class LightNotifier extends Notifier {
         
         for(String id : this.lightId) {
 	        Light light = this.lightController.getLightForId(id);
-	        this.lightController.setPulseBreathe(light, "Build Starting", ConfigColorToHue(this.preBuild));
+	        this.lightController.setPulseBreathe(light, "Build Starting", ConfigColorToHue(this.preBuild), this.brightness);
         }
         return super.prebuild(build, listener);
     }
@@ -128,13 +132,13 @@ public class LightNotifier extends Notifier {
 	
 	        switch (ballcolor) {
 	            case RED:
-	                this.lightController.setColor(light, "Bad Build", ConfigColorToHue(this.badBuild));
+	                this.lightController.setColor(light, "Bad Build", ConfigColorToHue(this.badBuild), this.brightness);
 	                break;
 	            case YELLOW:
-	                this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(this.unstableBuild));
+	                this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(this.unstableBuild), this.brightness);
 	                break;
 	            case BLUE:
-	                this.lightController.setColor(light, "Good Build", ConfigColorToHue(this.goodBuild));
+	                this.lightController.setColor(light, "Good Build", ConfigColorToHue(this.goodBuild), this.brightness);
 	                break;
 	        }
         }
@@ -199,8 +203,6 @@ public class LightNotifier extends Notifier {
         private String green;
         private String yellow;
         private String red;
-        private String saturation;
-        private String brightness;
 
         public DescriptorImpl() {
             this.load();
@@ -355,44 +357,6 @@ public class LightNotifier extends Notifier {
             return FormValidation.ok();
         }
 
-        /**
-         * Validates that some value was entered for saturation and that it's [0..255]
-         *
-         * @param value The hue value for saturation
-         * @throws IOException
-         * @throws ServletException
-         */
-        public FormValidation doCheckSaturation(@QueryParameter String value)
-                throws IOException, ServletException {
-            if (value.length() == 0)
-                return FormValidation.error("Please set the hue value for saturation");
-            if (!isInteger(value))
-                return FormValidation.error("Please enter a number");
-            if (Integer.parseInt(value) < 0 || Integer.parseInt(value) > 255) 
-                return FormValidation.error("Please enter number in range [0...255]");
-
-            return FormValidation.ok();
-        }
-
-        /**
-         * Validates that some value was entered for brightness and that it's [1..255]
-         *
-         * @param value The hue value for brightness
-         * @throws IOException
-         * @throws ServletException
-         */
-        public FormValidation doCheckBrightness(@QueryParameter String value)
-                throws IOException, ServletException {
-            if (value.length() == 0)
-                return FormValidation.error("Please set the hue value for saturation");
-            if (!isInteger(value))
-                return FormValidation.error("Please enter a number");
-            if (Integer.parseInt(value) < 1 || Integer.parseInt(value) > 255)
-                return FormValidation.error("Please enter number in range [1...255]");
-
-            return FormValidation.ok();
-        }
-
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             if (!formData.containsKey(FORM_KEY_BRIDGE_IP) || !formData.containsKey(FORM_KEY_BRIDGE_USERNAME))
@@ -404,8 +368,6 @@ public class LightNotifier extends Notifier {
             this.green = formData.getString(FORM_KEY_GREEN);
             this.yellow = formData.getString(FORM_KEY_YELLOW);
             this.red = formData.getString(FORM_KEY_RED);
-            this.saturation = formData.getString(FORM_KEY_SATURATION);
-            this.brightness = formData.getString(FORM_KEY_BRIGHTNESS);
 
             this.save();
 
@@ -434,14 +396,6 @@ public class LightNotifier extends Notifier {
 
         public String getRed() {
             return this.red;
-        }
-
-        public String getSaturation() {
-            return this.saturation;
-        }
-
-        public String getBrightness() {
-            return this.brightness;
         }
     }
 }

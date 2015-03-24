@@ -11,8 +11,6 @@ import java.io.PrintStream;
 public class LightController {
     private final PrintStream logger;
     private HueBridge hueBridge;
-    private int saturation;
-    private int brightness;
 
     /**
      * Connect with a hue bridge.
@@ -22,8 +20,6 @@ public class LightController {
      */
     public LightController(LightNotifier.DescriptorImpl descriptor, PrintStream logger) {
         this.logger = logger;
-        this.saturation = Integer.parseInt(descriptor.getSaturation());
-        this.brightness = Integer.parseInt(descriptor.getBrightness());
 
         try {
             this.hueBridge = new HueBridge(descriptor.getBridgeIp(), descriptor.getBridgeUsername());
@@ -60,14 +56,15 @@ public class LightController {
      * @param light light object that should be manipulated
      * @param logName The name to use for logging this color state change
      * @param hue The hue of the desired color
+     * @param hue brightness from 1 to 255
      * @return true if color update was successful, otherwise false
      */
-    public boolean setColor(Light light, String logName, int hue) {
+    public boolean setColor(Light light, String logName, int hue, int brightness) {
 
         if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(this.brightness).setSat(this.saturation).setHue(hue).setEffect(State.Effect.NONE).setAlert((State.AlertMode.NONE));
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(brightness).setSat(255).setHue(hue).setEffect(State.Effect.NONE).setAlert((State.AlertMode.NONE));
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
@@ -80,12 +77,12 @@ public class LightController {
         return true;
     }
 
-    public boolean setPulseColor(Light light, String logName, int hue) {
+    public boolean setPulseColor(Light light, String logName, int hue, int brightness) {
 
         if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(this.brightness).setSat(this.saturation).setHue(hue).setEffect(State.Effect.COLORLOOP).setAlert(State.AlertMode.NONE);
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(brightness).setSat(255).setHue(hue).setEffect(State.Effect.COLORLOOP).setAlert(State.AlertMode.NONE);
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
@@ -98,12 +95,12 @@ public class LightController {
         return true;
     }
 
-    public boolean setPulseBreathe(Light light, String logName, int hue) {
+    public boolean setPulseBreathe(Light light, String logName, int hue, int brightness) {
 
         if (null == this.hueBridge || null == light)
             return false;
 
-        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(this.brightness).setSat(this.saturation).setHue(hue).setEffect(State.Effect.NONE).setAlert(State.AlertMode.LSELECT);
+        StateUpdate stateUpdate = new StateUpdate().turnOn().setBrightness(brightness).setSat(255).setHue(hue).setEffect(State.Effect.NONE).setAlert(State.AlertMode.LSELECT);
 
         try {
             this.hueBridge.setLightState(light, stateUpdate);
